@@ -1,0 +1,206 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); /* Using Inter as fallback for Geist if Geist is not locally available, but will specify Geist in font-family */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background-primary: #121212;
+    --background-secondary: #0a0a0a;
+    --background-tertiary: #1a1a1a;
+    --background-elevated: #1e1e1e;
+    --border-primary: #222222;
+    --border-secondary: #333333;
+    --text-primary: #ffffff;
+    --text-secondary: #a3a3a3;
+    --text-tertiary: #737373;
+    
+    /* Exact hex codes from Image 1 */
+    --accent-primary: #10B981;
+    --accent-primary-hover: #059669;
+    --accent-secondary: #F59E0B;
+    --accent-tertiary: #3B82F6;
+    
+    /* Fallbacks for generic terms */
+    --accent-success: #10B981;
+    --accent-warning: #F59E0B;
+    --accent-error: #ef4444;
+    --accent-info: #3B82F6;
+  }
+
+  body {
+    background-color: #131313;
+    color: #e5e2e1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Custom scrollbar — matches reference design */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #131313;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #3c4a42;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4edea3;
+  }
+
+  /* JSON syntax highlighting */
+  .syntax-key    { color: #86948a; }
+  .syntax-string { color: #4edea3; }
+  .syntax-number { color: #ffb95f; }
+}
+
+@layer components {
+  /* Glass effect */
+  .glass {
+    @apply bg-[var(--background-secondary)] backdrop-blur-xl border border-[var(--border-primary)];
+  }
+
+  .glass-elevated {
+    @apply bg-[var(--background-tertiary)] backdrop-blur-xl border border-[var(--border-secondary)];
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-[var(--background-secondary)] rounded-lg border border-[var(--border-primary)] shadow-lg;
+  }
+
+  .card-elevated {
+    @apply bg-[var(--background-elevated)] rounded-lg border border-[var(--border-secondary)] shadow-xl;
+  }
+
+  /* Input styles */
+  .input {
+    @apply bg-[var(--background-primary)] border border-[var(--border-primary)] rounded-md px-3 py-1.5 text-sm
+           focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)]
+           transition-all duration-200 placeholder:text-[var(--text-tertiary)] text-[var(--text-primary)];
+  }
+
+  .input:focus {
+    @apply shadow-glow;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply bg-[var(--accent-primary)] text-black
+           px-3 py-1.5 rounded-md font-bold text-sm
+           hover:bg-[var(--accent-primary-hover)]
+           focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--background-secondary)]
+           transition-all duration-200;
+  }
+
+  .btn-primary:active {
+    @apply scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-[var(--background-tertiary)] border border-[var(--border-primary)] text-[var(--text-primary)]
+           px-3 py-1.5 rounded-md font-medium text-sm
+           hover:bg-[var(--background-elevated)] hover:border-[var(--border-secondary)] hover:text-[var(--accent-primary)]
+           focus:outline-none focus:ring-2 focus:ring-[var(--border-secondary)] focus:ring-offset-2 focus:ring-offset-[var(--background-secondary)]
+           transition-all duration-200;
+  }
+
+  .btn-secondary:active {
+    @apply scale-95;
+  }
+
+  .btn-danger {
+    @apply bg-gradient-to-r from-[#ef4444] to-red-600 text-white
+           px-3 py-1.5 rounded-md font-medium text-sm
+           hover:from-red-500 hover:to-red-700
+           focus:outline-none focus:ring-2 focus:ring-[#ef4444] focus:ring-offset-2 focus:ring-offset-[var(--background-secondary)]
+           transition-all duration-200 shadow-lg shadow-[#ef4444]/25;
+  }
+
+  .btn-danger:active {
+    @apply scale-95;
+  }
+
+  .btn-success {
+    @apply bg-[var(--accent-success)] text-white
+           px-3 py-1.5 rounded-md font-medium text-sm
+           hover:bg-[var(--accent-success)]
+           focus:outline-none focus:ring-2 focus:ring-[var(--accent-success)] focus:ring-offset-2 focus:ring-offset-[var(--background-secondary)]
+           transition-all duration-200;
+  }
+
+  .btn-success:active {
+    @apply scale-95;
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply px-2 py-0.5 rounded-md text-xs font-semibold;
+  }
+
+  .badge-primary {
+    @apply bg-transparent text-[var(--accent-primary)] border border-[var(--accent-primary)];
+  }
+
+  .badge-success {
+    @apply bg-transparent text-[var(--accent-success)] border border-[var(--accent-success)];
+  }
+
+  .badge-warning {
+    @apply bg-transparent text-[var(--accent-warning)] border border-[var(--accent-warning)];
+  }
+
+  .badge-error {
+    @apply bg-transparent text-[var(--accent-error)] border border-[var(--accent-error)];
+  }
+
+  .badge-info {
+    @apply bg-transparent text-[var(--accent-info)] border border-[var(--accent-info)];
+  }
+
+  /* Status indicator */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-dot-online {
+    @apply bg-[var(--accent-primary)] animate-pulse;
+  }
+
+  .status-dot-offline {
+    @apply bg-[var(--accent-error)];
+  }
+
+  /* Table row hover */
+  .table-row-hover {
+    @apply hover:bg-[var(--background-elevated)] transition-colors duration-150;
+  }
+
+  /* Code block */
+  .code-block {
+    @apply bg-black rounded-md p-4 font-mono text-sm overflow-auto
+           border border-[var(--border-primary)] text-[var(--text-primary)];
+  }
+
+  /* Subtle glow effect */
+  .glow {
+    @apply shadow-glow;
+  }
+
+  .glow-hover:hover {
+    @apply shadow-glow-lg;
+  }
+}
+
+code, .font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+}
