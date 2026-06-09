@@ -12,15 +12,21 @@ const { createCustomProxy, getTrafficData, clearTrafficData, setRecordingState, 
 
 const app = express();
 const server = http.createServer(app);
+
+// Normalize frontend URL (remove trailing slash)
+const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: frontendUrl,
     methods: ['GET', 'POST']
   }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: frontendUrl
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -50,7 +56,7 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3001;
 const PROXY_PORT = process.env.PROXY_PORT || 3002;
-const TARGET_URL = process.env.TARGET_URL || 'https://api.example.com';
+const TARGET_URL = process.env.TARGET_URL || 'https://jsonplaceholder.typicode.com';
 const DISABLE_PROXY = process.env.DISABLE_PROXY === 'true';
 
 // Handle port conflicts gracefully
