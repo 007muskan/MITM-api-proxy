@@ -51,6 +51,7 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 3001;
 const PROXY_PORT = process.env.PROXY_PORT || 3002;
 const TARGET_URL = process.env.TARGET_URL || 'https://api.example.com';
+const DISABLE_PROXY = process.env.DISABLE_PROXY === 'true';
 
 // Handle port conflicts gracefully
 server.on('error', (error) => {
@@ -68,30 +69,34 @@ server.listen(PORT, () => {
   console.log(`WebSocket server ready for connections`);
 });
 
-// Create separate proxy server
-const proxyApp = express();
-proxyApp.use(cors());
-proxyApp.use(express.json());
-proxyApp.use(express.urlencoded({ extended: true }));
+// Create separate proxy server (only if not disabled)
+if (!DISABLE_PROXY) {
+  const proxyApp = express();
+  proxyApp.use(cors());
+  proxyApp.use(express.json());
+  proxyApp.use(express.urlencoded({ extended: true }));
 
-// Apply custom proxy handler to all routes
-proxyApp.use('/', createCustomProxy(TARGET_URL, io));
+  // Apply custom proxy handler to all routes
+  proxyApp.use('/', createCustomProxy(TARGET_URL, io));
 
-const proxyServer = http.createServer(proxyApp);
+  const proxyServer = http.createServer(proxyApp);
 
-proxyServer.on('error', (error) => {
-  if (error.code === 'EADDRINUSE') {
-    console.error(`Proxy port ${PROXY_PORT} is already in use.`);
-  } else {
-    console.error('Proxy server error:', error);
-  }
-});
+  proxyServer.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`Proxy port ${PROXY_PORT} is already in use.`);
+    } else {
+      console.error('Proxy server error:', error);
+    }
+  });
 
-proxyServer.listen(PROXY_PORT, () => {
-  console.log(`Proxy server running on port ${PROXY_PORT}`);
-  console.log(`Forwarding requests to: ${TARGET_URL}`);
-  console.log(`Proxy URL: http://localhost:${PROXY_PORT}`);
-});
+  proxyServer.listen(PROXY_PORT, () => {
+    console.log(`Proxy server running on port ${PROXY_PORT}`);
+    console.log(`Forwarding requests to: ${TARGET_URL}`);
+    console.log(`Proxy URL: http://localhost:${PROXY_PORT}`);
+  });
+} else {
+  console.log('Proxy server disabled (DISABLE_PROXY=true)');
+}
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
