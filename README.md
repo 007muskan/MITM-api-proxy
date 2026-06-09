@@ -26,16 +26,7 @@ A powerful Man-In-The-Middle (MITM) proxy that allows frontend developers to int
 - Return custom response payloads
 - Toggle scenarios independently
 
-### 4. Record & Replay
-- Start/stop recording sessions
-- Capture full request/response data including headers
-- Store timestamps and response times
-- List all recorded sessions
-- Replay recorded sessions
-- Export recordings as JSON
-- Delete recordings
-
-### 5. Dashboard UI
+### 4. Dashboard UI
 - Single-page React application
 - Modern dark theme with Tailwind CSS
 - Real-time traffic updates
