@@ -13,20 +13,28 @@ const { createCustomProxy, getTrafficData, clearTrafficData, setRecordingState, 
 const app = express();
 const server = http.createServer(app);
 
-// Normalize frontend URL (remove trailing slash)
-const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+// Support multiple comma-separated frontend URLs, or allow all if not set
+const rawFrontendUrl = process.env.FRONTEND_URL || '';
+const allowedOrigins = rawFrontendUrl
+  ? rawFrontendUrl.split(',').map(u => u.trim().replace(/\/$/, ''))
+  : true; // allow all origins if FRONTEND_URL not configured
+
+if (!rawFrontendUrl) {
+  console.warn('⚠️  FRONTEND_URL not set — CORS is open (all origins allowed)');
+}
+
+const corsOptions = {
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  credentials: true
+};
 
 const io = new Server(server, {
-  cors: {
-    origin: frontendUrl,
-    methods: ['GET', 'POST']
-  }
+  cors: corsOptions
 });
 
 // Middleware
-app.use(cors({
-  origin: frontendUrl
-}));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -40,9 +48,34 @@ app.use('/api/scenarios', scenarioRoutes);
 app.use('/api/recordings', recordingRoutes);
 app.use('/api/traffic', trafficRoutes);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    name: 'MITM API Proxy',
+    status: 'running',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: ['/health', '/api/proxy', '/api/mocks', '/api/scenarios', '/api/recordings', '/api/traffic']
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    supabase: !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY),
+    proxy: process.env.DISABLE_PROXY !== 'true'
+  });
+});
+
+// 404 handler — must be last
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Route not found',
+    path: req.originalUrl,
+    availableRoutes: ['/', '/health', '/api/proxy', '/api/mocks', '/api/scenarios', '/api/recordings', '/api/traffic']
+  });
 });
 
 // Socket.IO connection handling
