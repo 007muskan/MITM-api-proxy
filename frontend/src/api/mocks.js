@@ -7,4 +7,5 @@ export const mocksApi = {
   update: (id, data) => api.put(`/api/mocks/${id}`, data),
   delete: (id) => api.delete(`/api/mocks/${id}`),
   toggle: (id, enabled) => api.patch(`/api/mocks/${id}/toggle`, { enabled }),
+  generateAi: (prompt) => api.post('/api/mocks/ai-generate', { prompt }),
 };

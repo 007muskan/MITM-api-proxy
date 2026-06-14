@@ -119,12 +119,8 @@ export default function MockManagement({ onAddAlert }) {
     if (!aiPrompt.trim()) return;
     setIsGenerating(true);
     try {
-      const response = await fetch('/api/mocks/ai-generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: aiPrompt })
-      });
-      const data = await response.json();
+      const response = await mocksApi.generateAi(aiPrompt);
+      const data = response.data;
       if (data.mock) {
         setFormData({
           url: data.mock.url || '/api/generated',
