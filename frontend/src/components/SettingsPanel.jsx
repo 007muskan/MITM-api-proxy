@@ -19,7 +19,7 @@ function SectionHeader({ icon: Icon, iconColor = '#4edea3', title, description }
 export default function SettingsPanel({ onAddAlert }) {
   const [settings, setSettings] = useState({
     proxyPort: 3002,
-    targetUrl: 'https://api.example.com',
+    targetUrl: 'https://jsonplaceholder.typicode.com',
     geminiApiKey: '',
     groqApiKey: '',
   });
@@ -99,7 +99,7 @@ export default function SettingsPanel({ onAddAlert }) {
               <div className="flex items-center gap-2 font-mono text-[11px]">
                 <span className="text-[#4edea3] bg-[#4edea3]/10 border border-[#4edea3]/30 px-2 py-0.5 rounded">localhost:{settings.proxyPort}</span>
                 <span className="text-[#3c4a42]">→</span>
-                <span className="text-[#bbcabf] truncate">{settings.targetUrl || 'https://api.example.com'}</span>
+                <span className="text-[#bbcabf] truncate">{settings.targetUrl || 'https://jsonplaceholder.typicode.com'}</span>
               </div>
             </div>
           </div>
@@ -241,7 +241,7 @@ export default function SettingsPanel({ onAddAlert }) {
             <button
               onClick={() => {
                 if (window.confirm('Reset all settings to defaults?')) {
-                  const defaults = { proxyPort: 3002, targetUrl: 'https://api.example.com' };
+                  const defaults = { proxyPort: 3002, targetUrl: 'https://jsonplaceholder.typicode.com' };
                   setSettings(defaults);
                   localStorage.removeItem('mitm-settings');
                 }
